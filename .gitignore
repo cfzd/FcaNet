@@ -1,0 +1,5 @@
+*.pth
+*.pyc
+log
+**/__pycache__
+pretrained_models
