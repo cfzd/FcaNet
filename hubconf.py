@@ -3,7 +3,7 @@ from model.fcanet import fcanet34 as _fcanet34
 from model.fcanet import fcanet50 as _fcanet50
 from model.fcanet import fcanet101 as _fcanet101
 from model.fcanet import fcanet152 as _fcanet152
-
+import torch
 # entrypoints:
 def fca34(pretrained=False):
     model = _fcanet34(pretrained=pretrained)
