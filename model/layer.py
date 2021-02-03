@@ -52,6 +52,9 @@ class MultiSpectralAttentionLayer(torch.nn.Module):
         n,c,h,w = x.shape
         if h != self.dct_h or w != self.dct_w:
             x = torch.nn.functional.adaptive_avg_pool2d(x, (self.dct_h, self.dct_w))
+            # If you have concerns about one-line-change, don't worry.   :)
+            # In the ImageNet models, this line will never be triggered. 
+            # This is for compatibility in instance segmentation and object detection.
         y = self.dct_layer(x)
 
         y = self.fc(y).view(n, c, 1, 1)
