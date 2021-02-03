@@ -17,7 +17,7 @@ model = torch.hub.load('cfzd/FcaNet', 'fca152' ,pretrained=True)
 
 
 # Evaluation
-Due to the conversion between FP16 training and the provided FP32 models, the evaluation results are slightly different(0.06%) compared with the reported results.
+Due to the conversion between FP16 training and the provided FP32 models, the evaluation results are slightly different(max -0.06%/+0.05%) compared with the reported results.
 |  Model | Reported | Evaluation Results | Link |   
 |:--------:|:------------:|:----------------:|:-------------------:|
 | Fca34 |     75.07    |       75.02      |          [GoogleDrive](https://drive.google.com/file/d/1zTbhu1ynShAG9qH_HKJfOQeWBWVD9dCW/view?usp=sharing)/[BaiduDrive(code:m7v8)](https://pan.baidu.com/s/1ylq_tJaRlCSHhDcmVinnfA) |
@@ -47,10 +47,10 @@ Our concrete answer is: **the proposed DCT is better than the learnable way, alt
 
 | Method                                      |      ImageNet Top-1 Acc   | Link |
 |---------------------------------------------|:-------------:|:----------:|
-| Learnable tensor with random initialization | 77.914 |        [GoogleDrive](https://drive.google.com/file/d/1KsiSuyHNtIxBEabdaDT_0Lt5foSNBgtb/view?usp=sharing)/[BaiduDrive(code:p2hl)](https://pan.baidu.com/s/1IBavAQ-GnvElqJBY6oblWg)     |
-| Learnable tensor with DCT initialization    |     78.352     |      [GoogleDrive](https://drive.google.com/file/d/1CwpW0lRwU7uXEf8ldm4hJUs-9O33MKfI/view?usp=sharing)/[BaiduDrive(code:txje)](https://pan.baidu.com/s/1CC2j9tjySH-GGZ9oM7cpjA)       |
-| Fixed tensor with random initialization     | 77.742 |        [GoogleDrive](https://drive.google.com/file/d/1jRXX4QqYsU8wyOHWW34qVF0DuLZ3R884/view?usp=sharing)/[BaiduDrive(code:g5t9)](https://pan.baidu.com/s/1HpJyi9h6L0_rvEg218JK9g)     |
-| Fixed tensor with DCT initialization (Ours) |     78.574     |     [GoogleDrive](https://drive.google.com/file/d/1O7qtqHSXdwRzUv_m6wrqB4TVF-rqJInB/view?usp=sharing)/[BaiduDrive(code:mgkk)](https://pan.baidu.com/s/1yrZYotYYGCFU7as_6h8GZw)        |
+| Learnable tensor, random initialization | 77.914 |        [GoogleDrive](https://drive.google.com/file/d/1KsiSuyHNtIxBEabdaDT_0Lt5foSNBgtb/view?usp=sharing)/[BaiduDrive(code:p2hl)](https://pan.baidu.com/s/1IBavAQ-GnvElqJBY6oblWg)     |
+| Learnable tensor, DCT initialization    |     78.352     |      [GoogleDrive](https://drive.google.com/file/d/1CwpW0lRwU7uXEf8ldm4hJUs-9O33MKfI/view?usp=sharing)/[BaiduDrive(code:txje)](https://pan.baidu.com/s/1CC2j9tjySH-GGZ9oM7cpjA)       |
+| Fixed tensor, random initialization     | 77.742 |        [GoogleDrive](https://drive.google.com/file/d/1jRXX4QqYsU8wyOHWW34qVF0DuLZ3R884/view?usp=sharing)/[BaiduDrive(code:g5t9)](https://pan.baidu.com/s/1HpJyi9h6L0_rvEg218JK9g)     |
+| Fixed tensor, DCT initialization (Ours) |     78.574     |     [GoogleDrive](https://drive.google.com/file/d/1O7qtqHSXdwRzUv_m6wrqB4TVF-rqJInB/view?usp=sharing)/[BaiduDrive(code:mgkk)](https://pan.baidu.com/s/1yrZYotYYGCFU7as_6h8GZw)        |
 
 
 To verify this results, one can select the cooresponding types of tensor in the L73-L83 in `model/layer.py`, uncomment it and train the whole network.
