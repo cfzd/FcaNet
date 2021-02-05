@@ -66,7 +66,7 @@ class MultiSpectralDCTLayer(nn.Module):
     """
     Generate dct filters
     """
-    def __init__(self, width, height, mapper_x, mapper_y, channel):
+    def __init__(self, height, width, mapper_x, mapper_y, channel):
         super(MultiSpectralDCTLayer, self).__init__()
         
         assert len(mapper_x) == len(mapper_y)
