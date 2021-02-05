@@ -3,12 +3,9 @@ PyTorch implementation of the paper "[FcaNet: Frequency Channel Attention Networ
 
 ![alt text](images/main.png "vis")
 
-# Install
-Please see [INSTALL.md](./INSTALL.md)
-
 # Simplest usage
 
-Models pretrained on ImageNet can be accessed by:
+Models pretrained on ImageNet can be simply accessed by (without any configuration or installation):
 ```
 model = torch.hub.load('cfzd/FcaNet', 'fca34' ,pretrained=True)
 model = torch.hub.load('cfzd/FcaNet', 'fca50' ,pretrained=True)
@@ -16,6 +13,8 @@ model = torch.hub.load('cfzd/FcaNet', 'fca101' ,pretrained=True)
 model = torch.hub.load('cfzd/FcaNet', 'fca152' ,pretrained=True)
 ```
 
+# Install
+Please see [INSTALL.md](./INSTALL.md)
 
 # Evaluation
 Due to the conversion between FP16 training and the provided FP32 models, the evaluation results are slightly different(max -0.06%/+0.05%) compared with the reported results.
