@@ -16,7 +16,9 @@ model = torch.hub.load('cfzd/FcaNet', 'fca152' ,pretrained=True)
 # Install
 Please see [INSTALL.md](./INSTALL.md)
 
-# Evaluation
+# Experiments
+## ImageNet
+
 Due to the conversion between FP16 training and the provided FP32 models, the evaluation results are slightly different(max -0.06%/+0.05%) compared with the reported results.
 |  Model | Reported | Evaluation Results | Link |   
 |:--------:|:------------:|:----------------:|:-------------------:|
@@ -25,20 +27,14 @@ Due to the conversion between FP16 training and the provided FP32 models, the ev
 |  Fca101  |    79.64    |       79.63       |          [GoogleDrive](https://drive.google.com/file/d/11CydGJ_dzjdOn9Z3E00enc125SpFJD8k/view?usp=sharing)/[BaiduDrive(code:8t0j)](https://pan.baidu.com/s/1SPE7_uxbKLz9s1k97fRl5Q) |
 |  Fca152  |     80.08     |       80.02       |          [GoogleDrive](https://drive.google.com/file/d/1rtNAmePV4dIpTEkLCT08p6yiRyH0FC3B/view?usp=sharing)/[BaiduDrive(code:5yeq)](https://pan.baidu.com/s/1rLtkHIDqks4jSIq0Nqt-fQ) |
 
-To evaluate, run
-```
-export NGPUS=4
+## COCO
+|  Model | Backbone | AP | Link |   
+|:--------:|:------------:|:----------------:|:-------------------:|
+| Faster RCNN | FcaNet50 | 39.0 |  |
+| Faster RCNN | FcaNet101 | 41.2 |  |
+| Mask RCNN | FcaNet50 | 40.3</br> 36.2 | |
 
-python -m torch.distributed.launch --nproc_per_node=$NGPUS main.py \
- -e \
- --b 128 \
- --dali_cpu \
- -a fcanet34 \ # also can be 50,101,152
- --evaluate_model /path/to/your/downloaded/model \
- /path/to/your/ImageNet
-```
-
-Or please see `launch_eval.sh`
+More details could be seen in `launch_eval.sh`
 
 # FAQ
 Since the paper is uploaded to arxiv, many academic peers ask us: the proposed DCT basis can be viewed as a simple tensor, then how about learning the tensor directly? Why use DCT instead of learnable tensor? Learnable tensor can be better than DCT.
@@ -60,6 +56,6 @@ To verify this results, one can select the cooresponding types of tensor in the 
 Please see `launch_training.sh`
 
 # TODO
-- [ ] Object detection models 
-- [ ] Instance segmentation models
+- [x] Object detection models
+- [x] Instance segmentation models
 - [ ] Make the switching between configs more easier 
