@@ -1,1 +1,0 @@
-./mmdetection/tools/dist_test.sh '/home/pengyi/temp_zpy/mmdetection/configs/faster_rcnn/faster_rcnn_freqnet50_fpn_2x_coco.py' '/home/pengyi/epoch_10.pth'  4 --eval bbox

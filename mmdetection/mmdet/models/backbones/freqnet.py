@@ -467,7 +467,6 @@ class FreqNet(nn.Module):
         self.feat_dim = self.block.expansion * base_channels * 2**(
             len(self.stage_blocks) - 1)
 
-        # self._init_weights('/home/pengyi/freq_attention/log/20201010_042828freq_resnet50_fp16_freq_sel8in1_vanillaSE_4layers_0.1lr_100epoch_cosinedecay_LSR_16freq/model_best.pth.tar')
 
     def make_stage_plugins(self, plugins, stage_idx):
         """Make plugins for ResNet ``stage_idx`` th stage.

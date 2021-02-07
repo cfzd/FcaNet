@@ -28,7 +28,7 @@ def main():
             continue
         results[img_dir] = {}
         try:
-            os.mkdir(osp.join('/home/pengyi/results', img_dir))
+            os.mkdir(osp.join('/home/results', img_dir))
         except Exception:
             pass
         _img_dir = osp.join(args.img, img_dir)
@@ -52,9 +52,9 @@ def main():
                 bbox_int = bbox.astype(np.int32)
                 left_top = (bbox_int[0], bbox_int[1])
                 right_bottom = (bbox_int[2], bbox_int[3])
-                plt.imsave(osp.join('/home/pengyi/results', img_dir, img.split('.')[0]+'{}.jpg'.format(idx+1)), _img[int(left_top[1]):int(right_bottom[1]), int(left_top[0]):int(right_bottom[0]), :])
+                plt.imsave(osp.join('/home/results', img_dir, img.split('.')[0]+'{}.jpg'.format(idx+1)), _img[int(left_top[1]):int(right_bottom[1]), int(left_top[0]):int(right_bottom[0]), :])
                 results[img_dir][img][idx+1] = bbox_int[:4]
-    with open('/home/pengyi/results/mask_pos.pkl', 'wb') as f:
+    with open('/home/results/mask_pos.pkl', 'wb') as f:
         pickle.dump(results, f)
 
             # show the results

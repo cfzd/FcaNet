@@ -182,7 +182,6 @@ def show_result_pyplot(model,
     img = model.show_result(img, result, score_thr=score_thr, show=False)
     plt.figure(figsize=fig_size)
     plt.imshow(mmcv.bgr2rgb(img))
-    # plt.imsave('/home/pengyi/results/temp.jpg', mmcv.bgr2rgb(img))
     plt.title(title)
     plt.tight_layout()
     plt.show(block=block)
