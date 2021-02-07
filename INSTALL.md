@@ -22,3 +22,5 @@
     cd apex
     pip install -v --disable-pip-version-check --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" ./
     ```
+
+4. Install mmdetection as [https://github.com/open-mmlab/mmdetection/blob/master/docs/get_started.md](https://github.com/open-mmlab/mmdetection/blob/master/docs/get_started.md) (Optional, only for detection and instance segmentation models).

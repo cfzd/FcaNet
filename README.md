@@ -16,25 +16,30 @@ model = torch.hub.load('cfzd/FcaNet', 'fca152' ,pretrained=True)
 # Install
 Please see [INSTALL.md](./INSTALL.md)
 
-# Experiments
-## ImageNet
+# Models
+## Classification models on ImageNet
 
 Due to the conversion between FP16 training and the provided FP32 models, the evaluation results are slightly different(max -0.06%/+0.05%) compared with the reported results.
 |  Model | Reported | Evaluation Results | Link |   
 |:--------:|:------------:|:----------------:|:-------------------:|
-| Fca34 |     75.07    |       75.02      |          [GoogleDrive](https://drive.google.com/file/d/1zTbhu1ynShAG9qH_HKJfOQeWBWVD9dCW/view?usp=sharing)/[BaiduDrive(code:m7v8)](https://pan.baidu.com/s/1ylq_tJaRlCSHhDcmVinnfA) |
-|  Fca50  |     78.52     |       78.57       |          [GoogleDrive](https://drive.google.com/file/d/1O7qtqHSXdwRzUv_m6wrqB4TVF-rqJInB/view?usp=sharing)/[BaiduDrive(code:mgkk)](https://pan.baidu.com/s/1yrZYotYYGCFU7as_6h8GZw) |
-|  Fca101  |    79.64    |       79.63       |          [GoogleDrive](https://drive.google.com/file/d/11CydGJ_dzjdOn9Z3E00enc125SpFJD8k/view?usp=sharing)/[BaiduDrive(code:8t0j)](https://pan.baidu.com/s/1SPE7_uxbKLz9s1k97fRl5Q) |
-|  Fca152  |     80.08     |       80.02       |          [GoogleDrive](https://drive.google.com/file/d/1rtNAmePV4dIpTEkLCT08p6yiRyH0FC3B/view?usp=sharing)/[BaiduDrive(code:5yeq)](https://pan.baidu.com/s/1rLtkHIDqks4jSIq0Nqt-fQ) |
+| FcaNet34 |     75.07    |       75.02      |          [GoogleDrive](https://drive.google.com/file/d/1zTbhu1ynShAG9qH_HKJfOQeWBWVD9dCW/view?usp=sharing)/[BaiduDrive(code:m7v8)](https://pan.baidu.com/s/1ylq_tJaRlCSHhDcmVinnfA) |
+|  FcaNet50  |     78.52     |       78.57       |          [GoogleDrive](https://drive.google.com/file/d/1O7qtqHSXdwRzUv_m6wrqB4TVF-rqJInB/view?usp=sharing)/[BaiduDrive(code:mgkk)](https://pan.baidu.com/s/1yrZYotYYGCFU7as_6h8GZw) |
+|  FcaNet101  |    79.64    |       79.63       |          [GoogleDrive](https://drive.google.com/file/d/11CydGJ_dzjdOn9Z3E00enc125SpFJD8k/view?usp=sharing)/[BaiduDrive(code:8t0j)](https://pan.baidu.com/s/1SPE7_uxbKLz9s1k97fRl5Q) |
+|  FcaNet152  |     80.08     |       80.02       |          [GoogleDrive](https://drive.google.com/file/d/1rtNAmePV4dIpTEkLCT08p6yiRyH0FC3B/view?usp=sharing)/[BaiduDrive(code:5yeq)](https://pan.baidu.com/s/1rLtkHIDqks4jSIq0Nqt-fQ) |
 
-## COCO
-|  Model | Backbone | AP | Link |   
-|:--------:|:------------:|:----------------:|:-------------------:|
-| Faster RCNN | FcaNet50 | 39.0 |  |
-| Faster RCNN | FcaNet101 | 41.2 |  |
-| Mask RCNN | FcaNet50 | 40.3</br> 36.2 | |
 
-More details could be seen in `launch_eval.sh`
+## Detection and instance segmentation models on COCO
+|  Model | Backbone | AP | AP50 | AP75 |Link |   
+|:--------:|:------------:|:----------------:|:-------------------:|:--:|:--:|
+| Faster RCNN | FcaNet50 | 39.0 | 61.1 | 42.3| [GoogleDrive](https://drive.google.com/file/d/1_LG_hqoD7v-vmWkw9_dq5Yis8IAF8cBe/view?usp=sharing)/[BaiduDrive(code:q15c)](https://pan.baidu.com/s/1nIEWG7uFFxDy82XHnTW5JA) |
+| Faster RCNN | FcaNet101 | 41.2 | 63.3 | 44.6 | [GoogleDrive](https://drive.google.com/file/d/1ObDEKQZbRrs_OsQBpBYa9WusKT9XkQso/view?usp=sharing)/[BaiduDrive(code:pgnx)](https://pan.baidu.com/s/15BRDqH3VzCDfZVPmSC0D7w) |
+| Mask RCNN | Fca50 det </br>  Fca50 seg | 40.3</br> 36.2 | 62.0 </br> 57.6 | 44.1 </br> 38.1 | [GoogleDrive](https://drive.google.com/file/d/18Kh3upRLauUXLmmOPSH9kCZe6aXoIlRm/view?usp=sharing)/[BaiduDrive(code:d9rn)](https://pan.baidu.com/s/1m40e9Bcxcf04lxq3LlFTbw) |
+
+# Training
+Please see `launch_training_classification.sh` and `launch_training_detection.sh` for training on ImageNet and COCO, respectively.
+
+# Testing
+Please see `launch_eval_classification.sh` and `launch_eval_detection.sh` for testing on ImageNet and COCO, respectively.
 
 # FAQ
 Since the paper is uploaded to arxiv, many academic peers ask us: the proposed DCT basis can be viewed as a simple tensor, then how about learning the tensor directly? Why use DCT instead of learnable tensor? Learnable tensor can be better than DCT.
@@ -51,9 +56,6 @@ Our concrete answer is: **the proposed DCT is better than the learnable way, alt
 
 To verify this results, one can select the cooresponding types of tensor in the L73-L83 in `model/layer.py`, uncomment it and train the whole network.
 
-
-# Training
-Please see `launch_training.sh`
 
 # TODO
 - [x] Object detection models
