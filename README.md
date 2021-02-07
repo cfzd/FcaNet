@@ -29,11 +29,13 @@ Due to the conversion between FP16 training and the provided FP32 models, the ev
 
 
 ## Detection and instance segmentation models on COCO
+We found the results are not exactly the same as reported (but mask rcnn model is correct). We will fix this problem very soon.
+
 |  Model | Backbone | AP | AP50 | AP75 |Link |   
 |:--------:|:------------:|:----------------:|:-------------------:|:--:|:--:|
 | Faster RCNN | FcaNet50 | 39.0 | 61.1 | 42.3| [GoogleDrive](https://drive.google.com/file/d/1_LG_hqoD7v-vmWkw9_dq5Yis8IAF8cBe/view?usp=sharing)/[BaiduDrive(code:q15c)](https://pan.baidu.com/s/1nIEWG7uFFxDy82XHnTW5JA) |
 | Faster RCNN | FcaNet101 | 41.2 | 63.3 | 44.6 | [GoogleDrive](https://drive.google.com/file/d/1ObDEKQZbRrs_OsQBpBYa9WusKT9XkQso/view?usp=sharing)/[BaiduDrive(code:pgnx)](https://pan.baidu.com/s/15BRDqH3VzCDfZVPmSC0D7w) |
-| Mask RCNN | Fca50 det </br>  Fca50 seg | 40.3</br> 36.2 | 62.0 </br> 57.6 | 44.1 </br> 38.1 | [GoogleDrive](https://drive.google.com/file/d/18Kh3upRLauUXLmmOPSH9kCZe6aXoIlRm/view?usp=sharing)/[BaiduDrive(code:d9rn)](https://pan.baidu.com/s/1m40e9Bcxcf04lxq3LlFTbw) |
+| Mask RCNN | Fca50 det </br>  Fca50 seg | 40.3</br> 36.2 | 62.0 </br> 58.6 | 44.1 </br> 38.1 | [GoogleDrive](https://drive.google.com/file/d/18Kh3upRLauUXLmmOPSH9kCZe6aXoIlRm/view?usp=sharing)/[BaiduDrive(code:d9rn)](https://pan.baidu.com/s/1m40e9Bcxcf04lxq3LlFTbw) |
 
 # Training
 Please see `launch_training_classification.sh` and `launch_training_detection.sh` for training on ImageNet and COCO, respectively.
@@ -60,4 +62,5 @@ To verify this results, one can select the cooresponding types of tensor in the 
 # TODO
 - [x] Object detection models
 - [x] Instance segmentation models
+- [ ] Fix the incorrect results of detection models
 - [ ] Make the switching between configs more easier 
