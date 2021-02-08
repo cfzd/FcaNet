@@ -29,7 +29,6 @@ Due to the conversion between FP16 training and the provided FP32 models, the ev
 
 
 ## Detection and instance segmentation models on COCO
-We found the results are not exactly the same as reported (but mask rcnn model is correct). We will fix this problem very soon.
 
 |  Model | Backbone | AP | AP50 | AP75 |Link |   
 |:--------:|:------------:|:----------------:|:-------------------:|:--:|:--:|
@@ -62,5 +61,5 @@ To verify this results, one can select the cooresponding types of tensor in the 
 # TODO
 - [x] Object detection models
 - [x] Instance segmentation models
-- [ ] Fix the incorrect results of detection models
+- [x] Fix the incorrect results of detection models
 - [ ] Make the switching between configs more easier 
