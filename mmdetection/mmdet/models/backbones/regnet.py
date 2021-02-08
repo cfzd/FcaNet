@@ -101,7 +101,7 @@ class RegNet(ResNet):
                  plugins=None,
                  with_cp=False,
                  zero_init_residual=True):
-        super(ResNet, self).__init__()
+        super(RegNet, self).__init__()
 
         # Generate RegNet parameters first
         if isinstance(arch, str):

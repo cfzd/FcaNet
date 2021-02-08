@@ -3,6 +3,7 @@ import collections
 from mmcv.utils import build_from_cfg
 
 from ..builder import PIPELINES
+from .transforms import Pad
 
 
 @PIPELINES.register_module()
@@ -37,7 +38,11 @@ class Compose(object):
         """
 
         for t in self.transforms:
+            # if isinstance(t, Pad):
+            #     print(data)
             data = t(data)
+            # if isinstance(t, Pad):
+            #     print(data)
             if data is None:
                 return None
         return data

@@ -117,7 +117,6 @@ class FreqBottleneck(nn.Module):
                  plugins=None,
                  reduction=16):
         """Bottleneck block for ResNet.
-
         If style is "pytorch", the stride-two layer is the 3x3 conv layer, if
         it is "caffe", the stride-two layer is the first 1x1 conv layer.
         """
@@ -228,11 +227,9 @@ class FreqBottleneck(nn.Module):
 
     def make_block_plugins(self, in_channels, plugins):
         """make plugins for block.
-
         Args:
             in_channels (int): Input channels of plugin.
             plugins (list[dict]): List of plugins cfg to build.
-
         Returns:
             list[str]: List of the names of plugin.
         """
@@ -317,7 +314,6 @@ class FreqBottleneck(nn.Module):
 @BACKBONES.register_module()
 class FreqNet(nn.Module):
     """ResNet backbone.
-
     Args:
         depth (int): Depth of resnet, from {18, 34, 50, 101, 152}.
         stem_channels (int | None): Number of stem channels. If not specified,
@@ -341,7 +337,6 @@ class FreqNet(nn.Module):
             freeze running stats (mean and var). Note: Effect on Batch Norm
             and its variants only.
         plugins (list[dict]): List of plugins for stages, each dict contains:
-
             - cfg (dict, required): Cfg dict to build plugin.
             - position (str, required): Position inside block to insert
               plugin, options are 'after_conv1', 'after_conv2', 'after_conv3'.
@@ -351,7 +346,6 @@ class FreqNet(nn.Module):
             memory while slowing down the training speed.
         zero_init_residual (bool): Whether to use zero init for last norm layer
             in resblocks to let them behave as identity.
-
     Example:
         >>> from mmdet.models import ResNet
         >>> import torch
@@ -470,14 +464,11 @@ class FreqNet(nn.Module):
 
     def make_stage_plugins(self, plugins, stage_idx):
         """Make plugins for ResNet ``stage_idx`` th stage.
-
         Currently we support to insert ``context_block``,
         ``empirical_attention_block``, ``nonlocal_block`` into the backbone
         like ResNet/ResNeXt. They could be inserted after conv1/conv2/conv3 of
         Bottleneck.
-
         An example of plugins format could be:
-
         Examples:
             >>> plugins=[
             ...     dict(cfg=dict(type='xxx', arg1='xxx'),
@@ -496,26 +487,17 @@ class FreqNet(nn.Module):
             >>> self = ResNet(depth=18)
             >>> stage_plugins = self.make_stage_plugins(plugins, 0)
             >>> assert len(stage_plugins) == 3
-
         Suppose ``stage_idx=0``, the structure of blocks in the stage would be:
-
         .. code-block:: none
-
             conv1-> conv2->conv3->yyy->zzz1->zzz2
-
         Suppose 'stage_idx=1', the structure of blocks in the stage would be:
-
         .. code-block:: none
-
             conv1-> conv2->xxx->conv3->yyy->zzz1->zzz2
-
         If stages is missing, the plugin would be applied to all stages.
-
         Args:
             plugins (list[dict]): List of plugins cfg to build. The postfix is
                 required if multiple same type plugins are inserted.
             stage_idx (int): Index of stage to build
-
         Returns:
             list[dict]: Plugins for current stage
         """
@@ -610,7 +592,6 @@ class FreqNet(nn.Module):
     
     def init_weights(self, pretrained=None):
         """Initialize the weights in backbone.
-
         Args:
             pretrained (str, optional): Path to pre-trained weights.
                 Defaults to None.
@@ -684,7 +665,6 @@ def load_checkpoint(model,
         strict (bool): Whether to allow different params for the model and
             checkpoint.
         logger (:mod:`logging.Logger` or None): The logger for error message.
-
     Returns:
         dict or OrderedDict: The loaded checkpoint.
     """

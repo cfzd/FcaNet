@@ -35,6 +35,7 @@ class SABLRetinaHead(BaseDenseHead):
         bbox_coder (dict): Config dict for bbox coder.
         reg_decoded_bbox (bool): Whether to regress decoded bbox. \
             Defaults to False.
+        background_label (int): Background label. Defaults to None.
         train_cfg (dict): Training config of SABLRetinaHead.
         test_cfg (dict): Testing config of SABLRetinaHead.
         loss_cls (dict): Config of classification loss.
@@ -65,6 +66,7 @@ class SABLRetinaHead(BaseDenseHead):
                      num_buckets=14,
                      scale_factor=3.0),
                  reg_decoded_bbox=False,
+                 background_label=None,
                  train_cfg=None,
                  test_cfg=None,
                  loss_cls=dict(
@@ -105,6 +107,8 @@ class SABLRetinaHead(BaseDenseHead):
         self.norm_cfg = norm_cfg
 
         self.reg_decoded_bbox = reg_decoded_bbox
+        self.background_label = (
+            num_classes if background_label is None else background_label)
 
         self.use_sigmoid_cls = loss_cls.get('use_sigmoid', False)
         self.sampling = loss_cls['type'] not in [
@@ -383,7 +387,7 @@ class SABLRetinaHead(BaseDenseHead):
         bbox_reg_weights = squares.new_zeros(
             (num_valid_squares, self.side_num * 4))
         labels = squares.new_full((num_valid_squares, ),
-                                  self.num_classes,
+                                  self.background_label,
                                   dtype=torch.long)
         label_weights = squares.new_zeros(num_valid_squares, dtype=torch.float)
 
@@ -399,9 +403,7 @@ class SABLRetinaHead(BaseDenseHead):
             bbox_cls_weights[pos_inds, :] = pos_bbox_cls_weights
             bbox_reg_weights[pos_inds, :] = pos_bbox_reg_weights
             if gt_labels is None:
-                # Only rpn gives gt_labels as None
-                # Foreground is the first class
-                labels[pos_inds] = 0
+                labels[pos_inds] = 1
             else:
                 labels[pos_inds] = gt_labels[
                     sampling_result.pos_assigned_gt_inds]
@@ -416,7 +418,10 @@ class SABLRetinaHead(BaseDenseHead):
         if unmap_outputs:
             num_total_anchors = flat_squares.size(0)
             labels = unmap(
-                labels, num_total_anchors, inside_flags, fill=self.num_classes)
+                labels,
+                num_total_anchors,
+                inside_flags,
+                fill=self.background_label)
             label_weights = unmap(label_weights, num_total_anchors,
                                   inside_flags)
             bbox_cls_targets = unmap(bbox_cls_targets, num_total_anchors,

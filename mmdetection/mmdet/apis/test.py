@@ -7,10 +7,9 @@ import time
 import mmcv
 import torch
 import torch.distributed as dist
-from mmcv.image import tensor2imgs
 from mmcv.runner import get_dist_info
 
-from mmdet.core import encode_mask_results
+from mmdet.core import encode_mask_results, tensor2imgs
 
 
 def single_gpu_test(model,
@@ -125,8 +124,7 @@ def collect_results_cpu(result_part, size, tmpdir=None):
                                 dtype=torch.uint8,
                                 device='cuda')
         if rank == 0:
-            mmcv.mkdir_or_exist('.dist_test')
-            tmpdir = tempfile.mkdtemp(dir='.dist_test')
+            tmpdir = tempfile.mkdtemp()
             tmpdir = torch.tensor(
                 bytearray(tmpdir.encode()), dtype=torch.uint8, device='cuda')
             dir_tensor[:len(tmpdir)] = tmpdir

@@ -11,7 +11,6 @@
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
 import os
-import subprocess
 import sys
 
 sys.path.insert(0, os.path.abspath('..'))
@@ -80,11 +79,3 @@ html_theme = 'sphinx_rtd_theme'
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
-
-
-def builder_inited_handler(app):
-    subprocess.run(['./stat.py'])
-
-
-def setup(app):
-    app.connect('builder-inited', builder_inited_handler)

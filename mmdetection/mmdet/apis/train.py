@@ -8,8 +8,7 @@ from mmcv.runner import (HOOKS, DistSamplerSeedHook, EpochBasedRunner,
 from mmcv.utils import build_from_cfg
 
 from mmdet.core import DistEvalHook, EvalHook
-from mmdet.datasets import (build_dataloader, build_dataset,
-                            replace_ImageToTensor)
+from mmdet.datasets import build_dataloader, build_dataset
 from mmdet.utils import get_root_logger
 
 
@@ -82,6 +81,7 @@ def train_detector(model,
         model = MMDataParallel(
             model.cuda(cfg.gpu_ids[0]), device_ids=cfg.gpu_ids)
 
+    # model.module.backbone._init_weights('/home/pengyi/freq_attention/log/20201010_042828freq_resnet50_fp16_freq_sel8in1_vanillaSE_4layers_0.1lr_100epoch_cosinedecay_LSR_16freq/model_best.pth.tar')
     # build runner
     optimizer = build_optimizer(model, cfg.optimizer)
     runner = EpochBasedRunner(
@@ -112,16 +112,10 @@ def train_detector(model,
 
     # register eval hooks
     if validate:
-        # Support batch_size > 1 in validation
-        val_samples_per_gpu = cfg.data.val.pop('samples_per_gpu', 1)
-        if val_samples_per_gpu > 1:
-            # Replace 'ImageToTensor' to 'DefaultFormatBundle'
-            cfg.data.val.pipeline = replace_ImageToTensor(
-                cfg.data.val.pipeline)
         val_dataset = build_dataset(cfg.data.val, dict(test_mode=True))
         val_dataloader = build_dataloader(
             val_dataset,
-            samples_per_gpu=val_samples_per_gpu,
+            samples_per_gpu=1,
             workers_per_gpu=cfg.data.workers_per_gpu,
             dist=distributed,
             shuffle=False)

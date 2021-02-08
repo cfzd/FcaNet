@@ -8,10 +8,8 @@ from .builder import TRANSFORMER
 
 class MultiheadAttention(nn.Module):
     """A warpper for torch.nn.MultiheadAttention.
-
     This module implements MultiheadAttention with residual connection,
     and positional encoding used in DETR is also passed as input.
-
     Args:
         embed_dims (int): The embedding dimension.
         num_heads (int): Parallel attention heads. Same as
@@ -39,7 +37,6 @@ class MultiheadAttention(nn.Module):
                 attn_mask=None,
                 key_padding_mask=None):
         """Forward function for `MultiheadAttention`.
-
         Args:
             x (Tensor): The input query with shape [num_query, bs,
                 embed_dims]. Same in `nn.MultiheadAttention.forward`.
@@ -64,7 +61,6 @@ class MultiheadAttention(nn.Module):
                 Default None.
             key_padding_mask (Tensor): ByteTensor with shape [bs, num_key].
                 Same in `nn.MultiheadAttention.forward`. Default None.
-
         Returns:
             Tensor: forwarded results with shape [num_query, bs, embed_dims].
         """
@@ -103,7 +99,6 @@ class MultiheadAttention(nn.Module):
 
 class FFN(nn.Module):
     """Implements feed-forward networks (FFNs) with residual connection.
-
     Args:
         embed_dims (int): The feature dimension. Same as
             `MultiheadAttention`.
@@ -166,7 +161,6 @@ class FFN(nn.Module):
 
 class TransformerEncoderLayer(nn.Module):
     """Implements one encoder layer in DETR transformer.
-
     Args:
         embed_dims (int): The feature dimension. Same as `FFN`.
         num_heads (int): Parallel attention heads.
@@ -212,7 +206,6 @@ class TransformerEncoderLayer(nn.Module):
 
     def forward(self, x, pos=None, attn_mask=None, key_padding_mask=None):
         """Forward function for `TransformerEncoderLayer`.
-
         Args:
             x (Tensor): The input query with shape [num_key, bs,
                 embed_dims]. Same in `MultiheadAttention.forward`.
@@ -222,7 +215,6 @@ class TransformerEncoderLayer(nn.Module):
                 num_key]. Same in `MultiheadAttention.forward`. Default None.
             key_padding_mask (Tensor): ByteTensor with shape [bs, num_key].
                 Same in `MultiheadAttention.forward`. Default None.
-
         Returns:
             Tensor: forwarded results with shape [num_key, bs, embed_dims].
         """
@@ -265,7 +257,6 @@ class TransformerEncoderLayer(nn.Module):
 
 class TransformerDecoderLayer(nn.Module):
     """Implements one decoder layer in DETR transformer.
-
     Args:
         embed_dims (int): The feature dimension. Same as
             `TransformerEncoderLayer`.
@@ -324,7 +315,6 @@ class TransformerDecoderLayer(nn.Module):
                 memory_key_padding_mask=None,
                 target_key_padding_mask=None):
         """Forward function for `TransformerDecoderLayer`.
-
         Args:
             x (Tensor): Input query with shape [num_query, bs, embed_dims].
             memory (Tensor): Tensor got from `TransformerEncoder`, with shape
@@ -345,7 +335,6 @@ class TransformerDecoderLayer(nn.Module):
             target_key_padding_mask (Tensor): ByteTensor for `x`, with shape
                 [bs, num_query]. Same as `key_padding_mask` in
                 `MultiheadAttention.forward`. Default None.
-
         Returns:
             Tensor: forwarded results with shape [num_query, bs, embed_dims].
         """
@@ -400,7 +389,6 @@ class TransformerDecoderLayer(nn.Module):
 
 class TransformerEncoder(nn.Module):
     """Implements the encoder in DETR transformer.
-
     Args:
         num_layers (int): The number of `TransformerEncoderLayer`.
         embed_dims (int): Same as `TransformerEncoderLayer`.
@@ -448,7 +436,6 @@ class TransformerEncoder(nn.Module):
 
     def forward(self, x, pos=None, attn_mask=None, key_padding_mask=None):
         """Forward function for `TransformerEncoder`.
-
         Args:
             x (Tensor): Input query. Same in `TransformerEncoderLayer.forward`.
             pos (Tensor): Positional encoding for query. Default None.
@@ -457,7 +444,6 @@ class TransformerEncoder(nn.Module):
                 Same in `TransformerEncoderLayer.forward`.
             key_padding_mask (Tensor): Same in
                 `TransformerEncoderLayer.forward`. Default None.
-
         Returns:
             Tensor: Results with shape [num_key, bs, embed_dims].
         """
@@ -484,7 +470,6 @@ class TransformerEncoder(nn.Module):
 
 class TransformerDecoder(nn.Module):
     """Implements the decoder in DETR transformer.
-
     Args:
         num_layers (int): The number of `TransformerDecoderLayer`.
         embed_dims (int): Same as `TransformerDecoderLayer`.
@@ -541,7 +526,6 @@ class TransformerDecoder(nn.Module):
                 memory_key_padding_mask=None,
                 target_key_padding_mask=None):
         """Forward function for `TransformerDecoder`.
-
         Args:
             x (Tensor): Input query. Same in `TransformerDecoderLayer.forward`.
             memory (Tensor): Same in `TransformerDecoderLayer.forward`.
@@ -557,7 +541,6 @@ class TransformerDecoder(nn.Module):
                 `TransformerDecoderLayer.forward`. Default None.
             target_key_padding_mask (Tensor): Same in
                 `TransformerDecoderLayer.forward`. Default None.
-
         Returns:
             Tensor: Results with shape [num_query, bs, embed_dims].
         """
@@ -596,17 +579,13 @@ class TransformerDecoder(nn.Module):
 @TRANSFORMER.register_module()
 class Transformer(nn.Module):
     """Implements the DETR transformer.
-
     Following the official DETR implementation, this module copy-paste
     from torch.nn.Transformer with modifications:
-
         * positional encodings are passed in MultiheadAttention
         * extra LN at the end of encoder is removed
         * decoder returns a stack of activations from all decoding layers
-
     See `paper: End-to-End Object Detection with Transformers
     <https://arxiv.org/pdf/2005.12872>`_ for details.
-
     Args:
         embed_dims (int): The feature dimension.
         num_heads (int): Parallel attention heads. Same as
@@ -683,7 +662,6 @@ class Transformer(nn.Module):
 
     def forward(self, x, mask, query_embed, pos_embed):
         """Forward function for `Transformer`.
-
         Args:
             x (Tensor): Input query with shape [bs, c, h, w] where
                 c = embed_dims.
@@ -693,10 +671,8 @@ class Transformer(nn.Module):
                 [num_query, c].
             pos_embed (Tensor): The positional encoding for encoder and
                 decoder, with the same shape as `x`.
-
         Returns:
             tuple[Tensor]: results of decoder containing the following tensor.
-
                 - out_dec: Output from decoder. If return_intermediate_dec \
                       is True output has shape [num_dec_layers, bs,
                       num_query, embed_dims], else has shape [1, bs, \

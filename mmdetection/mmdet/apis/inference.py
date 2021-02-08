@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import mmcv
 import numpy as np
 import torch
-from mmcv.ops import RoIPool
+from mmcv.ops import RoIAlign, RoIPool
 from mmcv.parallel import collate, scatter
 from mmcv.runner import load_checkpoint
 
@@ -13,7 +13,7 @@ from mmdet.datasets.pipelines import Compose
 from mmdet.models import build_detector
 
 
-def init_detector(config, checkpoint=None, device='cuda:0', cfg_options=None):
+def init_detector(config, checkpoint=None, device='cuda:0'):
     """Initialize a detector from config file.
 
     Args:
@@ -21,8 +21,6 @@ def init_detector(config, checkpoint=None, device='cuda:0', cfg_options=None):
             object.
         checkpoint (str, optional): Checkpoint path. If left as None, the model
             will not load any weights.
-        cfg_options (dict): Options to override some settings in the used
-            config.
 
     Returns:
         nn.Module: The constructed detector.
@@ -32,8 +30,6 @@ def init_detector(config, checkpoint=None, device='cuda:0', cfg_options=None):
     elif not isinstance(config, mmcv.Config):
         raise TypeError('config must be a filename or Config object, '
                         f'but got {type(config)}')
-    if cfg_options is not None:
-        config.merge_from_dict(cfg_options)
     config.model.pretrained = None
     model = build_detector(config.model, test_cfg=config.test_cfg)
     if checkpoint is not None:
@@ -46,6 +42,7 @@ def init_detector(config, checkpoint=None, device='cuda:0', cfg_options=None):
             warnings.warn('Class names are not saved in the checkpoint\'s '
                           'meta data, use COCO classes by default.')
             model.CLASSES = get_classes('coco')
+    print("Build model Done!")
     model.cfg = config  # save the config in the model for convenience
     model.to(device)
     model.eval()
@@ -111,10 +108,14 @@ def inference_detector(model, img):
         # scatter to specified GPU
         data = scatter(data, [device])[0]
     else:
+        # Use torchvision ops for CPU mode instead
         for m in model.modules():
-            assert not isinstance(
-                m, RoIPool
-            ), 'CPU inference with RoIPool is not supported currently.'
+            if isinstance(m, (RoIPool, RoIAlign)):
+                if not m.aligned:
+                    # aligned=False is not implemented on CPU
+                    # set use_torchvision on-the-fly
+                    m.use_torchvision = True
+        warnings.warn('We set use_torchvision=True in CPU mode.')
         # just get the actual data from DataContainer
         data['img_metas'] = data['img_metas'][0].data
 
@@ -129,25 +130,18 @@ async def async_inference_detector(model, img):
 
     Args:
         model (nn.Module): The loaded detector.
-        img (str | ndarray): Either image files or loaded images.
+        imgs (str/ndarray or list[str/ndarray]): Either image files or loaded
+            images.
 
     Returns:
         Awaitable detection results.
     """
     cfg = model.cfg
     device = next(model.parameters()).device  # model device
-    # prepare data
-    if isinstance(img, np.ndarray):
-        # directly add img
-        data = dict(img=img)
-        cfg = cfg.copy()
-        # set loading pipeline type
-        cfg.data.test.pipeline[0].type = 'LoadImageFromWebcam'
-    else:
-        # add information into dict
-        data = dict(img_info=dict(filename=img), img_prefix=None)
     # build the data pipeline
     test_pipeline = Compose(cfg.data.test.pipeline)
+    # prepare data
+    data = dict(img_info=dict(filename=img), img_prefix=None)
     data = test_pipeline(data)
     data = scatter(collate([data], samples_per_gpu=1), [device])[0]
 
@@ -158,13 +152,7 @@ async def async_inference_detector(model, img):
     return result
 
 
-def show_result_pyplot(model,
-                       img,
-                       result,
-                       score_thr=0.3,
-                       fig_size=(15, 10),
-                       title='result',
-                       block=True):
+def show_result_pyplot(model, img, result, score_thr=0.3, fig_size=(15, 10), name=1):
     """Visualize the detection results on the image.
 
     Args:
@@ -174,14 +162,12 @@ def show_result_pyplot(model,
             (bbox, segm) or just bbox.
         score_thr (float): The threshold to visualize the bboxes and masks.
         fig_size (tuple): Figure size of the pyplot figure.
-        title (str): Title of the pyplot figure.
-        block (bool): Whether to block GUI.
     """
     if hasattr(model, 'module'):
         model = model.module
     img = model.show_result(img, result, score_thr=score_thr, show=False)
-    plt.figure(figsize=fig_size)
-    plt.imshow(mmcv.bgr2rgb(img))
-    plt.title(title)
-    plt.tight_layout()
-    plt.show(block=block)
+    # plt.figure(figsize=fig_size)
+    # plt.imshow(mmcv.bgr2rgb(img))
+    # import pdb; pdb.set_trace()
+    plt.imsave('/home/pengyi/temp{}.jpg'.format(name), mmcv.bgr2rgb(img))
+    plt.show()

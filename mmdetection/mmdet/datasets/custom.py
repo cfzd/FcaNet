@@ -1,6 +1,4 @@
 import os.path as osp
-import warnings
-from collections import OrderedDict
 
 import mmcv
 import numpy as np
@@ -44,9 +42,7 @@ class CustomDataset(Dataset):
             ``img_prefix``, ``seg_prefix``, ``proposal_file`` if specified.
         test_mode (bool, optional): If set True, annotation will not be loaded.
         filter_empty_gt (bool, optional): If set true, images without bounding
-            boxes of the dataset's classes will be filtered out. This option
-            only works when `test_mode=False`, i.e., we never filter images
-            during tests.
+            boxes will be filtered out.
     """
 
     CLASSES = None
@@ -84,21 +80,23 @@ class CustomDataset(Dataset):
                                               self.proposal_file)
         # load annotations (and proposals)
         self.data_infos = self.load_annotations(self.ann_file)
+        # filter data infos if classes are customized
+        if self.custom_classes:
+            self.data_infos = self.get_subset_by_classes()
 
         if self.proposal_file is not None:
             self.proposals = self.load_proposals(self.proposal_file)
         else:
             self.proposals = None
-
-        # filter images too small and containing no annotations
+        # filter images too small
         if not test_mode:
             valid_inds = self._filter_imgs()
             self.data_infos = [self.data_infos[i] for i in valid_inds]
             if self.proposals is not None:
                 self.proposals = [self.proposals[i] for i in valid_inds]
-            # set group flag for the sampler
+        # set group flag for the sampler
+        if not self.test_mode:
             self._set_group_flag()
-
         # processing pipeline
         self.pipeline = Compose(pipeline)
 
@@ -149,9 +147,6 @@ class CustomDataset(Dataset):
 
     def _filter_imgs(self, min_size=32):
         """Filter images too small."""
-        if self.filter_empty_gt:
-            warnings.warn(
-                'CustomDataset does not support filtering empty gt images.')
         valid_inds = []
         for i, img_info in enumerate(self.data_infos):
             if min(img_info['width'], img_info['height']) >= min_size:
@@ -242,13 +237,12 @@ class CustomDataset(Dataset):
                 string, take it as a file name. The file contains the name of
                 classes where each line contains one class name. If classes is
                 a tuple or list, override the CLASSES defined by the dataset.
-
-        Returns:
-            tuple[str] or list[str]: Names of categories of the dataset.
         """
         if classes is None:
+            cls.custom_classes = False
             return cls.CLASSES
 
+        cls.custom_classes = True
         if isinstance(classes, str):
             # take it as a file path
             class_names = mmcv.list_from_file(classes)
@@ -258,6 +252,9 @@ class CustomDataset(Dataset):
             raise ValueError(f'Unsupported type {type(classes)} of classes.')
 
         return class_names
+
+    def get_subset_by_classes(self):
+        return self.data_infos
 
     def format_results(self, results, **kwargs):
         """Place holder to format result to dataset specific output."""
@@ -294,7 +291,7 @@ class CustomDataset(Dataset):
         if metric not in allowed_metrics:
             raise KeyError(f'metric {metric} is not supported')
         annotations = [self.get_ann_info(i) for i in range(len(self))]
-        eval_results = OrderedDict()
+        eval_results = {}
         if metric == 'mAP':
             assert isinstance(iou_thr, float)
             mean_ap, _ = eval_map(

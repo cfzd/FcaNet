@@ -124,16 +124,11 @@ class PAFPN(FPN):
                     outs.append(F.max_pool2d(outs[-1], 1, stride=2))
             # add conv layers on top of original feature maps (RetinaNet)
             else:
-                if self.add_extra_convs == 'on_input':
+                if self.extra_convs_on_inputs:
                     orig = inputs[self.backbone_end_level - 1]
                     outs.append(self.fpn_convs[used_backbone_levels](orig))
-                elif self.add_extra_convs == 'on_lateral':
-                    outs.append(self.fpn_convs[used_backbone_levels](
-                        laterals[-1]))
-                elif self.add_extra_convs == 'on_output':
-                    outs.append(self.fpn_convs[used_backbone_levels](outs[-1]))
                 else:
-                    raise NotImplementedError
+                    outs.append(self.fpn_convs[used_backbone_levels](outs[-1]))
                 for i in range(used_backbone_levels + 1, self.num_outs):
                     if self.relu_before_extra_convs:
                         outs.append(self.fpn_convs[i](F.relu(outs[-1])))
