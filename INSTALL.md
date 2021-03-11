@@ -4,6 +4,7 @@
     cd FcaNet
     pip install -r requirements.txt
     ```
+    
 2. Install Nvidia DALI
 
     For CUDA 10 
@@ -23,4 +24,14 @@
     pip install -v --disable-pip-version-check --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" ./
     ```
 
-4. Install mmdetection as [https://github.com/open-mmlab/mmdetection/blob/master/docs/get_started.md](https://github.com/open-mmlab/mmdetection/blob/master/docs/get_started.md) (Optional, only for detection and instance segmentation models).
+4. Install mmdetection (Optional, only for detection and instance segmentation models).
+
+    ``` 
+    pip install mmcv-full==1.1.4
+    cd FcaNet/mmdetection
+    pip install -r requirements/build.txt
+    pip install -v -e .  # or "python setup.py develop"
+    ```
+
+    
+
